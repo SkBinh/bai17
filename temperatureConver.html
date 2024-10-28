@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Temperature Conversion</h1>
+    <input type="number" id="temp" placeholder="Nhập độ C">
+    <button onclick="check()">Check</button>
+    <p id="result"></p>
+
+    <script>
+        class Temperature{
+            constructor(celcius){
+                this.celcius = this.setCelcius(celcius);
+            }
+            toFahrenheit(){
+                return (this.celcius * 9/5) + 32;
+            }
+            toKelvin(){
+                return this.celcius + 273.15;
+            }
+            setCelcius(value){
+                if(value >= -273){
+                    return value;
+                }else{
+                    alert("Nhiệt độ không thể nhỏ hơn -273 độ C");
+                    return -273;
+                }
+            }
+        }
+        function check(){
+            let celcius= parseFloat(document.getElementById("temp").value);
+            let temperature = new Temperature(celcius);
+            let fahrenheit= temperature.toFahrenheit();
+            let kelvin= temperature.toKelvin();
+    
+            document.getElementById("result").innerHTML= 
+            "Độ C = " + celcius + "<br>" + 
+            "Độ F = " + fahrenheit + "<br>" +
+            "Độ K = " + kelvin;
+        }
+    </script>
+</body>
+</html>
