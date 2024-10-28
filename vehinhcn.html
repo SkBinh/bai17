@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <label for="cDai">Chiều dài: </label>
+        <input type="number" id="cDai" placeholder="Chiều dài">
+    </div>
+    <div>
+        <label for="cRong">Chiều rộng: </label>
+        <input type="number" id="cRong" placeholder="Chiều rộng">
+    </div>
+    <div>
+        <button onclick="drawHCN()">Vẽ hình chữ nhật</button>
+    </div>
+    <p id="result"></p>
+
+    <canvas id="myCanvas" width="400px" height="400px" style="border: solid black 1px;"></canvas>
+
+    <script>
+        class Rectangle{
+            constructor(length, width){
+                this.width= width;
+                this.length= length;
+            }
+            chuVi(){
+                return 2* (this.length + this.width);
+            }
+            dienTich(){
+                return this.length * this.width;
+            }
+            draw(canvas){
+                let context= canvas.getContext("2d");
+                
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.fillStyle = "blue";
+                context.fillRect(50, 50, this.length, this.width);
+            }
+        }
+        function drawHCN(){
+            let length= parseInt(document.getElementById("cDai").value);
+            let width= parseInt(document.getElementById("cRong").value);
+
+            let rectangle= new Rectangle(length,width);
+            let canvas= document.getElementById("myCanvas");
+            rectangle.draw(canvas);
+
+            let area= rectangle.dienTich();
+            let perimeter= rectangle.chuVi();
+
+            document.getElementById("result").innerHTML= "Diện tích = " + area + "<br>" + " Chu vi = " + perimeter;
+        }
+    </script>
+</body>
+</html>

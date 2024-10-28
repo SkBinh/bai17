@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rectangle Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .input-container {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <label for="length">Chiều dài:</label>
+        <input type="number" id="length" value="100">
+    </div>
+    <div class="input-container">
+        <label for="width">Chiều rộng:</label>
+        <input type="number" id="width" value="50">
+    </div>
+    <button id="drawButton">Vẽ Hình Chữ Nhật</button>
+    
+    <canvas id="myCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
+    
+    <div id="result"></div>
+
+    <script>
+        class Rectangle {
+            constructor(length, width) {
+                this.length = length; // Chiều dài
+                this.width = width;   // Chiều rộng
+            }
+
+            // Tính diện tích
+            getArea() {
+                return this.length * this.width;
+            }
+
+            // Tính chu vi
+            getPerimeter() {
+                return 2 * (this.length + this.width);
+            }
+
+            // Vẽ hình chữ nhật trên canvas
+            draw(canvasId) {
+                const canvas = document.getElementById(canvasId);
+                const context = canvas.getContext('2d');
+
+                context.clearRect(0, 0, canvas.width, canvas.height); // Xóa canvas trước khi vẽ
+                context.fillStyle = 'blue'; // Màu sắc của hình chữ nhật
+                context.fillRect(50, 50, this.width, this.length); // (x, y, width, height)
+            }
+
+            // Cập nhật chiều dài và chiều rộng
+            setDimensions(length, width) {
+                this.length = length;
+                this.width = width;
+            }
+        }
+
+        // Hàm để vẽ hình chữ nhật và hiển thị kết quả
+        function drawRectangle() {
+            const length = parseInt(document.getElementById("length").value);
+            const width = parseInt(document.getElementById("width").value);
+            
+            let rectangle = new Rectangle(length, width);
+            rectangle.draw("myCanvas");
+
+            const area = rectangle.getArea();
+            const perimeter = rectangle.getPerimeter();
+
+            document.getElementById("result").innerHTML = 
+                `Diện tích: ${area} <br> Chu vi: ${perimeter}`;
+        }
+
+        // Gán sự kiện cho nút vẽ
+        document.getElementById("drawButton").addEventListener("click", drawRectangle);
+    </script>
+</body>
+</html>
