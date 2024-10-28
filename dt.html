@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .mobile-container{
+            width: 300px;
+            height: 600px;
+            position: relative;
+            border: solid black 5px;
+            border-radius: 25px;
+            margin: 20px;
+            background-color: rgba(185, 183, 183, 0.592);
+            display: flex;
+            flex-direction: column;
+            padding: 5px 5px 5px 5px;
+            
+        }
+        .status-bar{
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 5px 10px 5px ;
+            background-color: aliceblue;
+            height: 20px;
+            text-align: center;
+            align-items: center;
+           
+        }
+        .screen{
+            height: 60%;
+            width: 100%;
+            background-color: white;                   
+        }
+
+        .btn button{
+            background-color: blue;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 10px 10px;
+            margin: 5px 5px 5px 5px ;
+            width: 100%;
+            border-radius: 15px;
+            
+        }
+        .btn {
+            padding: 10px 10px;
+          
+        }
+
+        
+    </style>
+
+    <div style="display: flex;">
+        <div class="mobile-container">
+            <div>
+                <h2>Nokia</h2>
+            </div>
+            <div class="status-bar">
+                <p>Trạng thái: <span id="nokia-phone-status">Off</span></p>
+                <p>Pin <span id="nokia-battery-status">100%</span></p>
+            </div>
+            <div class="screen" id="nokia-message-area"></div>
+            <div id="nokia-input-container" style="display: none;">
+                <input id="nokia-message-input" type="text" placeholder="Nhập tin nhắn">
+                <button id="nokia-send-button">Gửi tin nhắn</button>
+            </div>
+            <div class="btn">
+                <button id="nokia-compose-button" disabled>Soạn tin nhắn</button>     
+                <button id="nokia-toggle-button">Bật điện thoại</button>
+                <button id="nokia-check-sent-button" disabled>Kiểm tra tin đã gửi</button>
+                <button id="nokia-inbox-button">Hộp thư</button>
+                <button id="nokia-charge-button">Sạc điện thoại</button>
+            </div>
+        </div>
+        <div class="mobile-container">
+            <div>
+                <h2>Iphone</h2>
+            </div>
+            <div class="status-bar">
+                <p>Trạng thái: <span id="iphone-phone-status">Off</span></p>
+                <p>Pin <span id="iphone-battery-status">100%</span></p>
+            </div>
+            <div class="screen" id="iphone-message-area"></div>
+            <div id="iphone-input-container" style="display: none;">
+                <input id="iphone-message-input" type="text" placeholder="Nhập tin nhắn">
+                <button id="iphone-send-button">Gửi tin nhắn</button>
+            </div>
+            <div class="btn">
+                <button id="iphone-compose-button"disabled>Soạn tin nhắn</button>     
+                <button id="iphone-toggle-button">Bật điện thoại</button>
+                <button id="iphone-check-sent-button" disabled>Kiểm tra tin đã gửi</button>
+                <button id="iphone-inbox-button">Hộp thư</button>
+                <button id="iphone-charge-button">Sạc điện thoại</button>
+            </div>
+        </div>
+    
+    </div>
+    <script>
+        class Mobile{
+            constructor(name, phoneStatusId, batteryId, messageAreaId, inputContainerId){
+                this.name= name;
+                this.isOn= false;
+                this.phoneStatusId= phoneStatusId;
+                this.batteryId= batteryId;            
+                this.battery= 100;
+                this.sentMessage=[];
+                this.inbox=[];
+                this.messageAreaId= messageAreaId;
+                this.inputContainerId= inputContainerId;
+                
+            }
+            turnOn(){
+                this.isOn= true;
+                document.getElementById(this.phoneStatusId).innerText= "On";
+            }
+            turnOff(){
+                this.isOn= false;
+                document.getElementById(this.phoneStatusId).innerText= "Off";
+                document.getElementById(this.inputContainerId).style.display= "none";
+            }
+            chargeBattery(amount){
+                this.battery= Math.min(100, this.battery + amount);
+                document.getElementById(this.batteryId).innerText= this.battery +"%";
+            }
+            composeMessage(){
+                if(!this.isOn){
+                    alert(`${this.name}`+ " đang tắt. Hãy bật điện thoại")
+                }else{
+                document.getElementById(this.inputContainerId).style.display="block";
+                this.battery -= 1;
+                document.getElementById(this.batteryId).innerText= this.battery +"%";        
+            }
+            }
+            sendMessage(receiver){
+                let messageInput= document.getElementById(`${this.name.toLowerCase()}-message-input`);
+                let message= messageInput.value;
+                
+                if(!this.isOn){
+                    alert(`${this.name}` + " đang tắt. Không thể gửi");
+                }else{
+                    if(message === ""){
+                        alert("Tin nhắn không được để trống");
+                    }
+                    receiver.receiveMessage(message);
+                    this.sentMessage.push(message);
+                    messageInput.value= "";               
+                    this.battery -= 1;
+                    document.getElementById(this.batteryId).innerText= this.battery +"%"; 
+                }
+            }
+            receiveMessage(message){
+                this.inbox.push(message);
+                this.battery -= 1;
+                document.getElementById(this.batteryId).innerText= this.battery +"%";
+            }
+            checkInbox(){
+                if(!this.isOn){
+                    alert(`${this.name}` + " đang tắt. Không thể xem");
+                }else{
+                    let inboxDisplay= this.inbox.length === 0 ? "Không có tin nhắn đến" : `Hộp thư đến: ${this.inbox.join(", ")}`;
+                    document.getElementById(this.messageAreaId).innerText= inboxDisplay;
+                    this.battery -= 1;
+                    document.getElementById(this.batteryId).innerText= this.battery +"%";
+
+                }
+            }
+            checkSentMessage(){
+                if(!this.isOn){
+                    alert(`${this.name}` + " đang tắt. Không thể xem");
+                }
+                let sentDisplay= this.sentMessage.length === 0 ?"Chưa gửi tin nhắn nào" : `Tin nhắn đã gửi: ${this.sentMessage.join(", ")}`;
+                document.getElementById(this.messageAreaId).innerText= sentDisplay;
+                this.battery -= 1;
+                document.getElementById(this.batteryId).innerText= this.battery +"%";
+            }
+
+
+        }
+        let Nokia= new Mobile ("Nokia", "nokia-phone-status","nokia-battery-status", "nokia-message-area", "nokia-input-container");
+        
+        document.getElementById("nokia-toggle-button").addEventListener("click", function(){         
+            if(Nokia.isOn){
+                Nokia.turnOff();
+                document.getElementById("nokia-message-area").innerText="";
+            }else{
+                Nokia.turnOn();
+                document.getElementById("nokia-check-sent-button").disabled = false;
+                document.getElementById("nokia-compose-button").disabled = false;
+            }                
+        });
+        document.getElementById("nokia-compose-button").addEventListener("click", function(){
+            Nokia.composeMessage();
+        });
+        
+        document.getElementById("nokia-send-button").addEventListener("click", function(){
+            Nokia.sendMessage(Iphone);
+        });
+        document.getElementById("nokia-charge-button").addEventListener("click",function(){
+            Nokia.chargeBattery(10);
+        });
+        document.getElementById("nokia-check-sent-button").addEventListener("click", function(){
+            Nokia.checkSentMessage();
+        });
+        document.getElementById("nokia-inbox-button").addEventListener("click", function(){
+            Nokia.checkInbox();
+        });
+        
+        let Iphone= new Mobile ("iphone", "iphone-phone-status","iphone-battery-status", "iphone-message-area", "iphone-input-container");
+
+        document.getElementById("iphone-toggle-button").addEventListener("click", function(){         
+            if(Iphone.isOn){
+                Iphone.turnOff();
+                document.getElementById("iphone-message-area").innerText="";
+            }else{
+                Iphone.turnOn();
+                document.getElementById("iphone-check-sent-button").disabled = false;
+                document.getElementById("iphone-compose-button").disabled = false;
+            }                
+        });
+        document.getElementById("iphone-compose-button").addEventListener("click", function(){
+            Iphone.composeMessage();
+        });
+
+        document.getElementById("iphone-send-button").addEventListener("click", function(){
+            Iphone.sendMessage(Nokia);
+        });
+        document.getElementById("iphone-charge-button").addEventListener("click",function(){
+            Iphone.chargeBattery(10);
+        });
+        document.getElementById("iphone-check-sent-button").addEventListener("click", function(){
+            Iphone.checkSentMessage();
+        });
+        document.getElementById("iphone-inbox-button").addEventListener("click", function(){
+            Iphone.checkInbox();
+        })
+    </script>
+</body>
+</html>

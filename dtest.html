@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Phone Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: row;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .mobile-container {
+            position: relative;
+            width: 300px;
+            height: 600px;
+            background-color: #fff;
+            border: 10px solid #000;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .status-bar {
+            height: 20px;
+            background-color: #ccc;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            font-size: 12px;
+            color: #333;
+        }
+        .status-bar p{
+            
+        }
+
+        .message-area {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .input-container {
+            display: none; /* Ẩn ô nhập tin nhắn theo mặc định */
+            margin-bottom: 10px;
+        }
+
+        .visible {
+            display: block; /* Hiện ô nhập tin nhắn khi cần */
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container" id="nokia-container">
+        <h2>Nokia</h2>
+        <div class="screen">
+            <div class="status-bar">
+                <div>Pin: <span id="nokia-battery-status">100%</span></div>
+                <div>Trạng thái: <span id="nokia-phone-status">Tắt</span></div>
+            </div>
+            <div class="message-area" id="nokia-message-area"></div>
+            <div class="input-container" id="nokia-input-container">
+                <input type="text" id="nokia-message-input" placeholder="Nhập tin nhắn">
+                <button id="nokia-send-button">Gửi tin nhắn</button>
+            </div>
+            <button id="nokia-toggle-button">Bật điện thoại</button>
+            <button id="nokia-check-sent-button" disabled>Kiểm tra tin đã gửi</button>
+            <button id="nokia-compose-button" disabled>Soạn tin nhắn</button>
+        </div>
+    </div>
+
+    <div class="mobile-container" id="iphone-container">
+        <h2>iPhone</h2>
+        <div class="screen">
+            <div class="status-bar">
+                <div>Pin: <span id="iphone-battery-status">100%</span></div>
+                <div>Trạng thái: <span id="iphone-phone-status">Tắt</span></div>
+            </div>
+            <div class="message-area" id="iphone-message-area"></div>
+            <div class="input-container" id="iphone-input-container">
+                <input type="text" id="iphone-message-input" placeholder="Nhập tin nhắn">
+                <button id="iphone-check-inbox-button" disabled>Kiểm tra hộp thư đến</button>
+            </div>
+            <button id="iphone-toggle-button">Bật điện thoại</button>
+            <button id="iphone-check-messages-button" disabled>Kiểm tra tin nhắn</button>
+        </div>
+    </div>
+
+    <p id="result"></p>
+
+    <script>
+        class Mobile {
+            constructor(name, batteryId, phoneStatusId, messageAreaId, inputContainerId) {
+                this.name = name;
+                this.battery = 100; // Trạng thái pin
+                this.isOn = false; // Trạng thái điện thoại
+                this.draftMessage = ""; // Tin nhắn đang soạn thảo
+                this.inbox = []; // Hộp thư đến
+                this.sentMessages = []; // Tin nhắn đã gửi
+                this.batteryId = batteryId;
+                this.phoneStatusId = phoneStatusId;
+                this.messageAreaId = messageAreaId;
+                this.inputContainerId = inputContainerId;
+            }
+
+            turnOn() {
+                this.isOn = true;
+                document.getElementById(this.phoneStatusId).innerText = "Bật";
+                console.log(`${this.name} đã được bật.`);
+            }
+
+            turnOff() {
+                this.isOn = false;
+                document.getElementById(this.phoneStatusId).innerText = "Tắt";
+                document.getElementById(this.inputContainerId).style.display = 'none'; // Ẩn ô nhập khi tắt điện thoại
+                console.log(`${this.name} đã được tắt.`);
+            }
+
+            chargeBattery(amount) {
+                this.battery = Math.min(100, this.battery + amount);
+                document.getElementById(this.batteryId).innerText = this.battery + "%";
+                console.log(`${this.name} đã được sạc. Pin hiện tại: ${this.battery}`);
+            }
+
+            composeMessage() {
+                if (!this.isOn) {
+                    alert(`${this.name} đang tắt. Không thể soạn tin.`);
+                    return;
+                }
+                document.getElementById(this.inputContainerId).style.display = 'block'; // Hiện ô nhập
+                this.battery -= 1; // Giảm pin
+                document.getElementById(this.batteryId).innerText = this.battery + "%"; // Cập nhật hiển thị pin
+                console.log(`Pin còn lại: ${this.battery}`);
+            }
+
+            sendMessage(receiver) {
+                const messageInput = document.getElementById(`${this.name.toLowerCase()}-message-input`);
+                const message = messageInput.value;
+
+                if (!this.isOn) {
+                    alert(`${this.name} đang tắt. Không thể gửi tin.`);
+                    return;
+                }
+                if (message === "") {
+                    alert(`Không có tin nhắn nào để gửi.`);
+                    return;
+                }
+                receiver.receiveMessage(message);
+                this.sentMessages.push(message);
+                messageInput.value = ""; // Xóa tin nhắn đã gửi
+                document.getElementById(this.inputContainerId).style.display = 'none'; // Ẩn ô nhập
+                this.battery -= 1; // Giảm pin
+                document.getElementById(this.batteryId).innerText = this.battery + "%"; // Cập nhật hiển thị pin
+                console.log(`Tin nhắn đã được gửi tới ${receiver.name}. Pin còn lại: ${this.battery}`);
+            }
+
+            receiveMessage(message) {
+                if (!this.isOn) {
+                    alert(`${this.name} đang tắt. Không thể nhận tin.`);
+                    return;
+                }
+                this.inbox.push(message);
+                this.battery -= 1; // Giảm pin
+                document.getElementById(this.batteryId).innerText = this.battery + "%"; // Cập nhật hiển thị pin
+                console.log(`Tin nhắn đã nhận: "${message}". Pin còn lại: ${this.battery}`);
+            }
+
+            checkInbox() {
+                if (!this.isOn) {
+                    alert(`${this.name} đang tắt. Không thể kiểm tra hộp thư đến.`);
+                    return;
+                }
+                const inboxDisplay = this.inbox.length === 0 ? "Hộp thư đến trống." : `Hộp thư đến: ${this.inbox.join(", ")}`;
+                console.log(inboxDisplay);
+                document.getElementById(this.messageAreaId).innerText = inboxDisplay;
+                this.battery -= 1; // Giảm pin
+                document.getElementById(this.batteryId).innerText = this.battery + "%"; // Cập nhật hiển thị pin
+            }
+
+            checkSentMessages() {
+                if (!this.isOn) {
+                    alert(`${this.name} đang tắt. Không thể kiểm tra tin đã gửi.`);
+                    return;
+                }
+                const sentDisplay = this.sentMessages.length === 0 ? "Không có tin nhắn đã gửi." : `Tin nhắn đã gửi: ${this.sentMessages.join(", ")}`;
+                console.log(sentDisplay);
+                document.getElementById(this.messageAreaId).innerText = sentDisplay;
+                this.battery -= 1; // Giảm pin
+                document.getElementById(this.batteryId).innerText = this.battery + "%"; // Cập nhật hiển thị pin
+            }
+        }
+
+        const nokia = new Mobile("Nokia", "nokia-battery-status", "nokia-phone-status", "nokia-message-area", "nokia-input-container");
+        const iphone = new Mobile("iPhone", "iphone-battery-status", "iphone-phone-status", "iphone-message-area", "iphone-input-container");
+
+        document.getElementById("nokia-toggle-button").addEventListener("click", function() {
+            if (nokia.isOn) {
+                nokia.turnOff();
+            } else {
+                nokia.turnOn();
+                document.getElementById("nokia-check-sent-button").disabled = false;
+                document.getElementById("nokia-compose-button").disabled = false;
+            }
+            document.getElementById("nokia-battery-status").innerText = nokia.battery + "%";
+        });
+
+        document.getElementById("nokia-compose-button").addEventListener("click", function() {
+            nokia.composeMessage();
+        });
+
+        document.getElementById("nokia-send-button").addEventListener("click", function() {
+            nokia.sendMessage(iphone);
+        });
+
+        document.getElementById("nokia-check-sent-button").addEventListener("click", function() {
+            nokia.checkSentMessages();
+            document.getElementById("result").innerText = "Đã kiểm tra tin đã gửi của Nokia!";
+        });
+
+        document.getElementById("iphone-toggle-button").addEventListener("click", function() {
+            if (iphone.isOn) {
+                iphone.turnOff();
+            } else {
+                iphone.turnOn();
+                document.getElementById("iphone-check-messages-button").disabled = false;
+            }
+            document.getElementById("iphone-battery-status").innerText = iphone.battery + "%";
+        });
+
+        document.getElementById("iphone-check-inbox-button").addEventListener("click", function() {
+            iphone.checkInbox();
+            document.getElementById("result").innerText = "Đã kiểm tra hộp thư đến của iPhone!";
+        });
+
+        document.getElementById("iphone-check-messages-button").addEventListener("click", function() {
+            const inboxDisplay = iphone.inbox.length === 0 ? "Hộp thư đến trống." : `Tin nhắn đã nhận từ Nokia: ${iphone.inbox.join(", ")}`;
+            document.getElementById("iphone-message-area").innerText = inboxDisplay;
+            iphone.battery -= 1; // Giảm pin khi kiểm tra tin nhắn
+            document.getElementById("iphone-battery-status").innerText = iphone.battery + "%";
+        });
+    </script>
+</body>
+</html>
