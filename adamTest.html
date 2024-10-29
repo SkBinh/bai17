@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Lớp Apple
+class Apple {
+  constructor() {
+    this._weight = 10; // Khối lượng mặc định của quả táo là 10 đv
+  }
+
+  getWeight() {
+    return this._weight;
+  }
+
+  // Phương thức giảm khối lượng của quả táo khi có người ăn
+  decreaseWeight() {
+    if (this._weight > 0) {
+      this._weight--;
+    }
+  }
+
+  isAvailable() {
+    return this._weight > 0;
+  }
+}
+
+// Lớp Human
+class Human {
+  constructor(name, gender, weight) {
+    this.name = name;
+    this.gender = gender;
+    this.weight = weight;
+  }
+
+  // Phương thức nói
+  say(words) {
+    console.log(`${this.name} nói: "${words}"`);
+  }
+
+  // Phương thức ăn táo
+  eat(apple) {
+    if (apple.isAvailable()) {
+      apple.decreaseWeight();
+      this.weight++;
+      console.log(`${this.name} đã ăn một miếng táo. Cân nặng hiện tại: ${this.weight}`);
+    } else {
+      console.log(`${this.name} không thể ăn, quả táo đã hết.`);
+    }
+  }
+
+  // Phương thức kiểm tra khối lượng của quả táo
+  checkAppleWeight(apple) {
+    console.log(`Khối lượng của quả táo hiện tại là: ${apple.getWeight()} đv`);
+  }
+
+  // Phương thức lấy tên
+  getName() {
+    return this.name;
+  }
+
+  // Phương thức lấy giới tính
+  getGender() {
+    return this.gender;
+  }
+
+  // Phương thức lấy cân nặng
+  getWeight() {
+    return this.weight;
+  }
+}
+
+// Tạo quả táo
+const apple = new Apple();
+
+// Tạo đối tượng Adam và Eva
+const adam = new Human("Adam", "Nam", 70);
+const eva = new Human("Eva", "Nữ", 50);
+
+// Adam và Eva nói và kiểm tra quả táo
+adam.say("Tôi sẽ ăn quả táo này!");
+eva.say("Tôi cũng muốn thử một miếng!");
+
+adam.checkAppleWeight(apple);
+eva.checkAppleWeight(apple);
+
+// Adam và Eva ăn táo lần lượt cho đến khi hết
+while (apple.isAvailable()) {
+  adam.eat(apple);
+  eva.eat(apple);
+}
+
+// Kiểm tra khối lượng quả táo sau khi ăn
+adam.checkAppleWeight(apple);
+
+    </script>
+</body>
+</html>
