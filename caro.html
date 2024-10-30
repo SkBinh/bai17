@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caro 20x20</title>
+</head>
+<body>
+    <style>
+        #board {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 2px solid black;
+        }
+        .cell {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #resetBtn {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    <div id="board"></div>
+    <button id="resetBtn" onclick="resetBoard()">Reset</button>
+    <script>
+        const board = document.getElementById("board");
+        const rows = 20;
+        const cols = 20;
+        let gameBoard = Array.from({length: rows}, () => Array(cols).fill(null));
+        let currentPlayer = "X";
+        
+        for (let i=0; i< rows; i++) {
+            for (let j=0; j< cols; j++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.style.left = i * rows + "px";
+                cell.style.top = j * cols + "px";
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                board.appendChild(cell);
+            }    
+        }
+
+        board.addEventListener("click",onClick);
+        function onClick(event) {
+            const cell = event.target;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if(gameBoard[row][col]) return;
+            gameBoard[row][col] = currentPlayer;
+            cell.textContent = currentPlayer;
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            
+            checkWinner(row, col);
+        }
+        checkWinner = (row, col) => {
+            const player = gameBoard[row][col];
+            const countConsecutive = (dx, dy) => {
+                let count = 0;
+                let x = row;
+                let y = col;
+                while (x >= 0 && x < rows && y >= 0 && y < cols && gameBoard[x][y] === player) {
+                    x += dx;
+                    y += dy;
+                    count++;
+                }
+                return count;
+            }
+            if(
+                countConsecutive(0, 1) + countConsecutive(0, -1) - 1 >= 5 ||
+                countConsecutive(1, 0) + countConsecutive(-1, 0) - 1 >= 5 ||
+                countConsecutive(1, 1) + countConsecutive(-1, -1) -1 >=5 ||
+                countConsecutive(1, -1) + countConsecutive(-1, 1) -1 >=5
+            ){
+                alert(`Winner is ${player}`);
+                board.removeEventListener("click", onClick);
+            }
+        }
+        function resetBoard() {
+            gameBoard = Array.from({ length: rows }, () => Array(cols).fill(null)); // Khởi tạo lại bảng
+            const cells = document.querySelectorAll(".cell");
+            cells.forEach(cell => cell.textContent = ""); 
+            currentPlayer = "X"; 
+            board.addEventListener("click", onClick);
+        }
+        </script>
+</body>
+</html>

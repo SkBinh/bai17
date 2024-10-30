@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cờ Caro</title>
+    <style>
+        #board {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 2px solid black;
+        }
+        .cell {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    
+    <script>
+        const boardSize = 20;
+        const cellSize = 20;
+        const board = document.getElementById('board');
+        let gameBoard = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
+        let currentPlayer = 'X';
+
+        // Tạo bảng 20x20
+        for (let row = 0; row < boardSize; row++) {
+            for (let col = 0; col < boardSize; col++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.style.left = `${col * cellSize}px`;
+                cell.style.top = `${row * cellSize}px`;
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+                board.appendChild(cell);
+            }
+        }
+        board.addEventListener('click', (event) => {
+    const cell = event.target;
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+
+    // Kiểm tra nếu ô đã được đánh dấu
+    if (gameBoard[row][col]) return;
+
+    // Cập nhật mảng và hiển thị X hoặc O
+    gameBoard[row][col] = currentPlayer;
+    cell.textContent = currentPlayer;
+
+    // Chuyển lượt người chơi
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+
+    // Kiểm tra chiến thắng
+    checkWinner(row, col);
+});
+function checkWinner(row, col) {
+    const player = gameBoard[row][col];
+
+    // Hàm đếm số lượng ô liên tiếp theo hướng xác định
+    const countConsecutive = (dx, dy) => {
+        let count = 0;
+        let x = row, y = col;
+        
+        while (x >= 0 && x < boardSize && y >= 0 && y < boardSize && gameBoard[x][y] === player) {
+            count++;
+            x += dx;
+            y += dy;
+        }
+        
+        return count;
+    };
+
+    // Kiểm tra các hướng (ngang, dọc, chéo)
+    if (
+        countConsecutive(0, 1) + countConsecutive(0, -1) - 1 >= 5 ||  // Hàng ngang
+        countConsecutive(1, 0) + countConsecutive(-1, 0) - 1 >= 5 ||  // Cột dọc
+        countConsecutive(1, 1) + countConsecutive(-1, -1) - 1 >= 5 || // Chéo chính
+        countConsecutive(1, -1) + countConsecutive(-1, 1) - 1 >= 5    // Chéo phụ
+    ) {
+        alert(`Người thắng cuộc là: ${player}`);
+        board.removeEventListener('click', onClick); // Dừng trò chơi
+    }
+}
+
+    </script>
+</body>
+</html>
