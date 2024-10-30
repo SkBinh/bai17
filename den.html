@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Switch and Lamp Interaction</title>
+</head>
+<body>
+    <p id="result">Trạng thái bóng đèn: Tắt</p>
+    <script>
+        class ElectricLamp {
+            constructor() {
+                this.status = false; 
+            }
+
+            getStatus() {
+                return this.status ? "Sáng" : "Tắt";
+            }
+
+            turnOn() {
+                this.status = true;
+            }
+
+            turnOff() {
+                this.status = false;
+            }
+        }
+
+        class SwitchButton {
+            constructor(lamp) {
+                this.status = false;
+                this.lamp = lamp;
+            }
+
+            connectToLamp(lamp) {
+                this.lamp = lamp;
+            }
+
+            switchOn() {
+                this.status = true;
+                this.lamp.turnOn();
+                this.updateDisplay();
+            }
+
+            switchOff() {
+                this.status = false;
+                this.lamp.turnOff();
+                this.updateDisplay();
+            }
+
+            toggle() {
+                if (this.status) {
+                    this.switchOff();
+                } else {
+                    this.switchOn();
+                }
+            }
+
+            updateDisplay() {
+                document.getElementById("result").textContent = "Trạng thái bóng đèn: " + this.lamp.getStatus();
+            }
+        }
+
+        
+        const electricLamp_1 = new ElectricLamp();
+        const switchButton_1 = new SwitchButton(electricLamp_1);
+
+        let toggleCount = 0;
+        const interval = setInterval(() => {
+            if (toggleCount < 10) {
+                switchButton_1.toggle();
+                toggleCount++;
+            } else {
+                clearInterval(interval); 
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

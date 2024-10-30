@@ -49,6 +49,7 @@
                     alert(`${this.name} đã ăn và cân nặng hiện tại là ${this.weight}`);
                 }else{
                     alert(`${this.name} không còn gì để ăn.`);
+                    
                 }
             }
             checkWeight(apple){
@@ -66,6 +67,7 @@
         adam.checkWeight(apple1);
 
         while(apple1.isAvailable()){
+
             adam.eat(apple1);
             eva.eat(apple1);
         }
