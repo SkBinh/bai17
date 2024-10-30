@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class Rat{
+            constructor(name, weight, speed){
+                this.name = name;
+                this.weight = weight;
+                this.speed = speed;
+                this.isAlive = true;
+            }
+            getName(){
+                return this.name;
+            }
+            getWeight(){
+                return this.weight;
+            }
+            getSpeed(){
+                return this.speed;
+            }
+            squeak(){
+                console.log(`${this.name} squeak squeak!`);
+            }
+        }
+        class Cat{
+            constructor(name, weight, speed){
+                this.name = name;
+                this.weight = weight;
+                this.speed = speed;
+                
+            }
+            getName(){
+                return this.name;
+            }
+            getWeight(){
+                return this.weight;
+            }
+            getSpeed(){
+                return this.speed;
+            }
+            mew(){
+                console.log(`${this.name} mew mew!`);
+            }
+            catchRat(rat){
+               if(this.speed > rat.getSpeed()){
+                console.log(`${this.name} catch ${rat.getName()}!`);
+               }else{   
+                console.log(`${this.name} can't catch ${rat.getName()}!`);
+            }
+            }
+            eatRat(rat){
+                if(rat.isAlive === true){
+                    this.weight += rat.weight;
+                    rat.isAlive = false;
+                    console.log(`${this.name} eat ${rat.getName()}! Curent weight: ${this.weight}`);
+                }else{
+                    console.log(`${this.name} can't eat ${rat.getName()}! because ${rat.getName()} is dead!`);
+                }
+            }
+        }
+        let rat1 = new Rat('Rat', 1, 5);
+        let cat1 = new Cat('Cat', 3, 6);
+        rat1.squeak();
+        console.log("Rat weight: " + rat1.getWeight());
+        cat1.mew();
+        console.log("Cat weight: " + cat1.getWeight());
+        cat1.getWeight();
+        cat1.catchRat(rat1);
+        cat1.eatRat(rat1);
+        cat1.eatRat(rat1);
+    </script>
+</body>
+</html>
