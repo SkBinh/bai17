@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class Remote{
+            constructor(code){
+                this.code = code;
+            }
+            changeChannel(tv, channel){
+                tv.setChannel(channel);
+            }
+            adjustVolume(tv, volume){
+                tv.setVolume(volume);
+            }
+            togglePower(tv){
+                tv.togglePower();
+            }
+        }
+
+        class TV{
+            constructor(){
+                this.isOn = false;
+                this.channel = 1;
+                this.volume = 10;
+            }
+            togglePower(){
+                this.isOn = !this.isOn;
+                let status = this.isOn ? "On" : "Off";
+                console.log(`TV is ${status}`);
+            }
+            setChannel(channel){
+                if(this.isOn){
+                    this.channel = channel;
+                    console.log(`Change channel to ${this.channel}`);
+                }else{
+                    console.log("TV is off, can't change channel.");
+                }
+            }
+            setVolume(volume){
+                if(this.isOn){
+                    this.volume += volume;
+                    console.log(`Volume is ${this.volume}`);
+                }else{
+                    console.log("TV is off, can't change volume.");
+                }
+            }
+        }
+
+        let tv = new TV();
+        let remote = new Remote();
+
+        remote.togglePower(tv);
+        remote.changeChannel(tv, 7);
+        remote.changeChannel(tv, 3);
+        remote.adjustVolume(tv, 2);
+        remote.togglePower(tv);
+    </script>
+</body>
+</html>
